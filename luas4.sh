@@ -11,8 +11,8 @@ fi
 ### START: Set subvolume name, UUIDs, User name, Download URLs, Download directory, Dependencies.
 DATE=$(date +"%Y%m%d_%H%M")
 SNAME="gentoo_$DATE"
-RUUID="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
-BUUID="XXXX-XXXX"
+ROOT_UUID="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+BOOT_UUID="XXXX-XXXX"
 USERNAME="damiano"
 LIVEUSB_URL="https://distfiles.gentoo.org/releases/amd64/autobuilds/current-livegui-amd64/livegui-amd64-20250315T023326Z.iso"
 CHECKSUM_URL="https://distfiles.gentoo.org/releases/amd64/autobuilds/current-livegui-amd64/livegui-amd64-20250315T023326Z.iso.sha256"
@@ -45,8 +45,8 @@ echo "Checking that unsquashfs has xz support: OK"
 echo "Downloading iso and sha256sum ..."
 mkdir -p "$DOWNLOAD_DIR"
 cd "$DOWNLOAD_DIR"
-#wget --timeout=10 --tries=3 "$LIVEUSB_URL"
-#wget --timeout=10 --tries=3 "$CHECKSUM_URL"
+wget --timeout=10 --tries=3 "$LIVEUSB_URL"
+wget --timeout=10 --tries=3 "$CHECKSUM_URL"
 echo "Downloading iso and sha256sum OK"
 echo "Verifying sha256sum ..."
 sha256sum -c *.sha256 || {
@@ -72,13 +72,13 @@ echo "Unmounting /mnt/boot and /mnt: OK"
 
 ### START: Create subvolume for next generation.
 echo "Creating subvolumes for next generation ..."
-mount /dev/disk/by-uuid/"$RUUID" /mnt/
+mount /dev/disk/by-uuid/"$ROOT_UUID" /mnt/
 btrfs subvolume create /mnt/"$SNAME" 
 umount /mnt/
-mount /dev/disk/by-uuid/"$RUUID" -o subvol="$SNAME" /mnt
+mount /dev/disk/by-uuid/"$ROOT_UUID" -o subvol="$SNAME" /mnt
 mkdir -p /mnt/boot
-mount /dev/disk/by-uuid/"$BUUID" /mnt/boot/
-mount -o remount,rw /dev/disk/by-uuid/"$BUUID" /mnt/boot/
+mount /dev/disk/by-uuid/"$BOOT_UUID" /mnt/boot/
+mount -o remount,rw /dev/disk/by-uuid/"$BOOT_UUID" /mnt/boot/
 echo "Creating subvolumes for install: OK"
 ### END: Create subvolume for next generation.
 
@@ -94,8 +94,8 @@ echo "Copying and extracting live-image: OK"
 ### START: Create fstab entries and boot entry.
 echo "Create fstab entries and boot entry ..."
 cat <<EOF > /mnt/etc/fstab
-UUID="$RUUID" / btrfs rw,relatime,subvol=/$SNAME 0 1
-UUID="$BUUID" /boot vfat defaults,fmask=0137,dmask=0027 0 2
+UUID="$ROOT_UUID" / btrfs rw,relatime,subvol=/$SNAME 0 1
+UUID="$BOOT_UUID" /boot vfat defaults,fmask=0137,dmask=0027 0 2
 EOF
 
 # Store kernel name for boot entry
@@ -104,7 +104,7 @@ cat <<EOF > /mnt/boot/loader/entries/$SNAME.conf
 title   $SNAME
 linux   /vmlinuz-$LINUX
 initrd  /initramfs-$LINUX.img
-options root=UUID=$RUUID rootflags=subvol=$SNAME rw rootfstype=btrfs i915.enable_psr=0
+options root=UUID=$ROOT_UUID rootflags=subvol=$SNAME rw rootfstype=btrfs i915.enable_psr=0
 EOF
 echo "Create fstab entries and boot entry: OK"
 ### END: Create fstab entries and boot entry.
