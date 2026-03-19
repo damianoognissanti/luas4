@@ -14,8 +14,9 @@ SNAME="gentoo_$DATE"
 ROOT_UUID="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 BOOT_UUID="XXXX-XXXX"
 USERNAME="damiano"
-LIVEUSB_URL="https://distfiles.gentoo.org/releases/amd64/autobuilds/current-livegui-amd64/livegui-amd64-20250315T023326Z.iso"
-CHECKSUM_URL="https://distfiles.gentoo.org/releases/amd64/autobuilds/current-livegui-amd64/livegui-amd64-20250315T023326Z.iso.sha256"
+ISO="livegui-amd64-20260215T164556Z.iso"
+LIVEUSB_URL="https://distfiles.gentoo.org/releases/amd64/autobuilds/current-livegui-amd64/$ISO"
+CHECKSUM_URL="https://distfiles.gentoo.org/releases/amd64/autobuilds/current-livegui-amd64/$ISO.sha256"
 DOWNLOAD_DIR="/tmp/gentoo_liveusb"
 DEPS=("7z" "btrfs" "unsquashfs" "arch-chroot")
 ### END: Set subvolume name, UUIDs, User name, Download URLs, Download directory, Dependencies.
