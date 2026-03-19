@@ -33,7 +33,7 @@ echo "Checking for dependencies: OK"
 
 ### START: Check if unsquashfs supports XZ compression
 echo "Checking that unsquashfs has xz support ..."
-if ! unsquashfs -h 2>&1 | grep -q 'xz'; then
+if ! unsquashfs -help-section decompressors 2>&1 | grep -q 'xz'; then
     echo "Error: unsquashfs does not support XZ compression. Ensure squashfs-tools is compiled with XZ support."
     echo "On gentoo you need USE=lzma when compiling"
     exit 1
